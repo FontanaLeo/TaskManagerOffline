@@ -1,4 +1,5 @@
 # TaskFlow — Lista de Tarefas PWA
+//Lembrando que isso e um trabalho de faculdade que utilizei IA, porem a logica foi estruturada por mim, quero tambem dizer que eu refatoraria bastante coisa, por conta dos tamanhos dos files, porem ficou muito intuitivo, so instalar e rodar com o Live Server
 
 > Projeto acadêmico demonstrando os fundamentos de **Progressive Web Apps (PWA)** com HTML5, CSS3 e JavaScript Vanilla.
 
