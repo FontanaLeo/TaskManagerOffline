@@ -1,0 +1,36 @@
+{
+  "name": "TaskFlow — Lista de Tarefas PWA",
+  "short_name": "TaskFlow",
+  "description": "Uma Progressive Web App de lista de tarefas que funciona offline e pode ser instalada no seu dispositivo.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1A1A1A",
+  "theme_color": "#1A1A1A",
+  "lang": "pt-BR",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Adicionar Tarefa",
+      "short_name": "Nova Tarefa",
+      "description": "Abre o app para adicionar uma nova tarefa",
+      "url": "/index.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

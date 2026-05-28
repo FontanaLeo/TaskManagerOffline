@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  
+  <title>TaskFlow — Lista de Tarefas</title>
+  <meta name="description" content="Lista de tarefas PWA que funciona offline e pode ser instalada no seu dispositivo." />
+
+  <meta name="theme-color" content="#1A1A1A" />
+
+  
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TaskFlow" />
+
+  
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  
+  <meta name="msapplication-TileColor" content="#1A1A1A" />
+  <meta name="msapplication-TileImage" content="icons/icon-192.png" />
+
+  <link rel="manifest" href="manifest.json" />
+
+  
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div id="toast" class="toast" role="alert" aria-live="polite" aria-atomic="true">
+    <span id="toast-icon" class="toast-icon"></span>
+    <span id="toast-message" class="toast-message"></span>
+  </div>
+
+  <div id="install-banner" class="install-banner hidden" role="complementary">
+    <div class="install-banner-content">
+      <div class="install-banner-icon">
+        <img src="icons/icon-192.png" alt="TaskFlow" width="40" height="40" />
+      </div>
+      <div class="install-banner-text">
+        <strong>Instalar TaskFlow</strong>
+        <span>Adicione à sua tela inicial para acesso offline</span>
+      </div>
+    </div>
+    <div class="install-banner-actions">
+      <button id="install-btn" class="btn-install" aria-label="Instalar aplicativo">
+        Instalar
+      </button>
+      <button id="dismiss-install-btn" class="btn-dismiss" aria-label="Fechar banner de instalação">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  
+  <div class="app-wrapper">
+
+    
+    <header class="app-header">
+      <div class="header-top">
+        <div class="header-brand">
+          <div class="brand-icon" aria-hidden="true">✓</div>
+          <h1 class="brand-name">TaskFlow</h1>
+        </div>
+        <div class="header-meta">
+          
+          <div id="connection-status" class="connection-status online" role="status" aria-label="Status da conexão">
+            <span class="status-dot"></span>
+            <span class="status-label">Online</span>
+          </div>
+          
+          <div id="sw-status" class="sw-status" title="Status do Service Worker">
+            <span class="sw-dot"></span>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="header-stats" aria-label="Resumo das tarefas">
+        <div class="stat-item">
+          <span id="total-count" class="stat-number">0</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span id="pending-count" class="stat-number">0</span>
+          <span class="stat-label">Pendentes</span>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span id="done-count" class="stat-number">0</span>
+          <span class="stat-label">Concluídas</span>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <div class="progress-ring-container" aria-label="Progresso">
+            <svg class="progress-ring" viewBox="0 0 36 36" aria-hidden="true">
+              <circle class="progress-ring-bg" cx="18" cy="18" r="15.9"/>
+              <circle id="progress-ring-fill" class="progress-ring-fill" cx="18" cy="18" r="15.9"/>
+            </svg>
+            <span id="progress-pct" class="progress-pct">0%</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <main class="app-main" id="main-content">
+
+      
+      <section class="add-task-section" aria-label="Adicionar nova tarefa">
+        <div class="input-group">
+          <input
+            type="text"
+            id="task-input"
+            class="task-input"
+            placeholder="Adicionar nova tarefa..."
+            maxlength="200"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="true"
+            aria-label="Digite o nome da tarefa"
+          />
+          <button id="add-btn" class="btn-add" aria-label="Adicionar tarefa" title="Adicionar tarefa (Enter)">
+            <span class="btn-add-icon" aria-hidden="true">+</span>
+          </button>
+        </div>
+        <div id="char-counter" class="char-counter" aria-live="polite">
+          <span id="char-count">0</span>/200
+        </div>
+      </section>
+
+      
+      <section class="filters-section" aria-label="Filtrar tarefas">
+        <nav class="filter-tabs" role="tablist" aria-label="Filtros de tarefa">
+          <button
+            class="filter-tab active"
+            data-filter="all"
+            role="tab"
+            aria-selected="true"
+            aria-controls="task-list"
+            id="tab-all"
+          >
+            Todas
+            <span id="badge-all" class="filter-badge">0</span>
+          </button>
+          <button
+            class="filter-tab"
+            data-filter="pending"
+            role="tab"
+            aria-selected="false"
+            aria-controls="task-list"
+            id="tab-pending"
+          >
+            Pendentes
+            <span id="badge-pending" class="filter-badge">0</span>
+          </button>
+          <button
+            class="filter-tab"
+            data-filter="done"
+            role="tab"
+            aria-selected="false"
+            aria-controls="task-list"
+            id="tab-done"
+          >
+            Concluídas
+            <span id="badge-done" class="filter-badge">0</span>
+          </button>
+        </nav>
+
+        
+        <button id="clear-done-btn" class="btn-clear-done hidden" aria-label="Remover todas as tarefas concluídas">
+          Limpar concluídas
+        </button>
+      </section>
+
+      
+      <section class="tasks-section" aria-label="Lista de tarefas">
+        <ul
+          id="task-list"
+          class="task-list"
+          role="list"
+          aria-label="Tarefas"
+          aria-live="polite"
+          aria-relevant="additions removals"
+        >
+          
+        </ul>
+
+        
+        <div id="empty-state" class="empty-state" aria-live="polite">
+          <div class="empty-icon" aria-hidden="true">📋</div>
+          <p class="empty-title">Nenhuma tarefa aqui</p>
+          <p class="empty-sub" id="empty-subtitle">Adicione sua primeira tarefa acima!</p>
+        </div>
+      </section>
+
+    </main>
+
+    
+    <footer class="app-footer" aria-label="Informações do aplicativo">
+      <p class="footer-text">
+        <span aria-hidden="true">⚡</span>
+        TaskFlow PWA &mdash; Funciona offline
+        <span aria-hidden="true"> · </span>
+        <span id="last-saved" class="last-saved"></span>
+      </p>
+      
+      <details class="pwa-info" aria-label="Informações técnicas da PWA">
+        <summary>ℹ️ Info PWA</summary>
+        <div class="pwa-info-content">
+          <div class="info-item">
+            <span class="info-label">Cache:</span>
+            <span id="info-cache" class="info-value">Verificando...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">SW Status:</span>
+            <span id="info-sw" class="info-value">Verificando...</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Storage:</span>
+            <span id="info-storage" class="info-value">localStorage</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Versão Cache:</span>
+            <span id="info-version" class="info-value">taskflow-cache-v1</span>
+          </div>
+        </div>
+      </details>
+    </footer>
+
+  </div>
+
+  <script src="app.js" defer></script>
+
+</body>
+</html>
+
